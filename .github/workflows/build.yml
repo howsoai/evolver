@@ -1,0 +1,138 @@
+name: Build
+run-name: "Branch Build (${{ github.run_attempt }}.${{ github.run_number }}) - ${{ github.ref_name }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      amalgam-build:
+        description: |
+          (Optional) Amalgam build or version number. Defaults to the latest release.
+
+          Examples:
+            '6807310618',
+            'https://github.com/howsoai/amalgam/actions/runs/6807310618',
+            '57.0.1'
+        required: false
+        type: string
+        default: 'latest'
+  workflow_call:
+    inputs:
+      build-type:
+        required: false
+        type: string
+      optional-release-tag:
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  metadata:
+    uses: howsoai/.github/.github/workflows/set-metadata.yml@main
+    secrets: inherit
+    with:
+      build-type: ${{ inputs.build-type }}
+      optional-release-tag: ${{ inputs.optional-release-tag }}
+      amalgam-build: ${{ inputs.amalgam-build }}
+
+  workflow-summary:
+    needs: ['metadata']
+    uses: "howsoai/.github/.github/workflows/workflow-summary.yml@main"
+    secrets: inherit
+    with:
+      upstream-details: ${{ needs.metadata.outputs.upstream-details }}
+
+  test:
+    name: Fuzz tests (${{ matrix.amlg-postfix }})
+    needs: ["metadata"]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        amlg-postfix: ['-st', '-mt']
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Download Amalgam linux-amd64
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        run_id=$(printf "%s" '${{ needs.metadata.outputs.upstream-details }}' | jq -r '."amalgam".run_id')
+        run_type=$(printf "%s" '${{ needs.metadata.outputs.upstream-details }}' | jq -r '."amalgam".run_type')
+        gh $run_type download -D amalgam/lib/linux/amd64 -R "howsoai/amalgam" -p "*linux-amd64*" "$run_id"
+        # Needed because release/non-release downloads are different structure
+        cd amalgam/lib/linux/amd64 && if [ ! -f *.tar.gz ]; then mv */*.tar.gz ./; fi && tar -xvzf *.tar.gz
+
+    - name: Extract Amalgam binaries
+      run: |
+        cd amalgam/lib
+        find . -type d -name lib -exec sh -c 'mv {}/* "$(dirname {})"' \;
+
+    - name: Run Evolver
+      continue-on-error: true
+      id: run
+      run: |
+        exit 1
+
+    - name: Compress 'evolve' directory
+      if: steps.run.outcome != 'failure'
+      run: |
+        # do stuff
+        tar -czvf evolver${{ matrix.amlg-postfix }}.tar.gz evolver
+
+    - name: Upload 'evolve' directory
+      if: steps.run.outcome != 'failure'
+      uses: actions/upload-artifact@v4
+      with:
+        name: evolver${{ matrix.amlg-postfix }}-artifacts
+        path: evolver${{ matrix.amlg-postfix }}.tar.gz
+        if-no-files-found: error
+
+    - name: Check results
+      if: steps.run.outcome == 'failure'
+      uses: actions/github-script@v3
+      with:
+        script: |
+          core.setFailed('There was a critical failure in the 'Run Evolver' step! The 'evolver' directory has been compressed and attached as a build artifact.')
+
+  generate-changelog:
+    if: inputs.build-type == 'release'
+    secrets: inherit
+    needs:
+      - metadata
+    uses: "howsoai/.github/.github/workflows/release-notes.yml@main"
+
+  release:
+    if: inputs.build-type == 'release'
+    needs:
+      - metadata
+      - generate-changelog
+      - workflow-summary
+      - test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ needs.metadata.outputs.version }}
+          commit: ${{ github.sha }}
+          name: "${{ github.event.repository.name }} ${{ needs.metadata.outputs.version }}"
+          artifactErrorsFailBuild: true
+          body: ${{ needs.generate-changelog.outputs.changelog }}
+          makeLatest: legacy
