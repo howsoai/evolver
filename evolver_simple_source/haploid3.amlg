@@ -1,0 +1,9 @@
+(null
+
+	;reacts to the input that is passed in
+	#react #haploid
+		(list
+			player
+			player + 1
+		)
+)

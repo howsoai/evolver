@@ -1,0 +1,12 @@
+(null
+
+	;reacts to the input that is passed in
+	#react #haploid
+			(seq
+				(if
+					(= 0 (get (get board 1) 1))
+					(list 0 0)
+					(list 1 2)	
+				)
+			)
+)

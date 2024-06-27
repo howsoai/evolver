@@ -1,0 +1,9 @@
+(null
+
+	;reacts to the input that is passed in
+	#react #haploid
+		(list 
+			(get (get board 0) 0)
+			(get (get board 2) 2)
+		)
+)

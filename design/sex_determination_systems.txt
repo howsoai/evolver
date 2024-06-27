@@ -1,0 +1,157 @@
+Regular GA/GP involve two entities each of which has one copy of code (though people normally don’t think of it this way), crossed over and mutated.
+
+What we’ve come up with is a system in which we’re crossing over two or more entities, one of which has two or more copies or variants of code (the other can have one copy, two copies, or more), that go through a process by which the copies are crossed over, selected from, or copied, and then put into the offspring entity.  When the copies or variants are executed on the offspring, a process which may be crossover, voting, or constraint (only allow valid outputs through) can be used to merge the results back into a single result.
+
+Here are the valid/interesting combinations.  The representation is as follows.
+
+There are one or two organisms for each group.  The numbers 1 and 2 represent the first and second copies/versions of code (ploids) respectively for the first organism, 3 and 4 are the first and second copies/versions of the code for the second organism.  If both organisms are haploids, then that would be 1 and 3.  If both organisms are diploids, then the first would have 1 and 2, and the second would have 3 and 4.  This scheme could be expanded (with a little bit of an effort) to cover any number of copies of the code beyond 2; I don't think this offers a lot of value and is exceptionally rare in nature (the Platypus and a couple fish are the only known beings that do that).
+
+Each grouping (between pairs of ***) indicates the organism(s) reproducing.  Below that lists the methods of crossover to haploid and diploid.  The first column represents what is put into the offspring's first ploid, and the second column represents what is put into the offspring's second ploid (which is empty if not applicable).  "&" means a crossover operation on the two codes/chromosomes.  | means random selection of one of the two codes (1|2 means that either 1 or 2 will be selected and copied, but not both).  If no symbol is present, just a number, that means the code/chromosome is just copied. Mutation can occur either before or after a crossover, selection, or copy operation.  In our current implementation, we do mutation at the end.
+
+After each outcome, there is a brief comment on what is going on.  If it maps to something that happens in biology, it is indicated in parenthesis.
+
+***one haploid only  (1)***
+
+	=>haploid
+	1			-mitosis / asexual reproduction (occurs in biology)
+	1		1	-asexual combo to create diploid
+
+***one diploid only  (1 2)***
+	
+	=>haploid
+	1&3			-meiosis (occurs in biology)
+	1|3			-allosome in meiosis / separation (occurs in biology)
+	
+	=>diploid
+	1		3	-mitosis (occurs in biology)
+	1&3		1&3	-meiosis with asexual combo to create diploid
+	
+
+***haploid (1) & haploid (3)***
+
+	=>haploid
+	1&3			-traditional GA/GP (might occur in rarely in biology?... may have occurred often earlier in evolution history?  -- may be open scientific question)
+	
+	=>diploid
+	1		3	-UV (occurs biology:  Bryophyte and some algae, coupled with a diploid->haploid crossover meiosis... may also have occurred other times in history of evolution)
+	
+
+***diploid (1 2) & haploid (3)***
+	
+	=> haploid
+	1|2     	-X0 (occurs in biology, in some insects and some rodents)
+	1&2      	-haplodiploid (occurs in biology, mostly insects, especially eusocial)
+	(1&2)&3   	-kitchen sink / blender (?!)
+	3        	-asexual haploid (occurs in biology)
+	
+	=> diploid
+	1		2	-asexual diploid (occurs in biology)
+	1&2		3	-haplodiploid (occurs in biology, mostly insects, especially eusocial)
+	1|2		3	-X0 (occurs in biology, in some insects and some rodents)
+
+
+***diploid (1 2) & diploid (3 4)***
+	
+	=> diploid
+	1&2		3&4	-hermaphrodite diploid or single chromosome of larger organism or temperature-dependent (occurs in biology: snails, crocodiles)
+	1|2		3|4 -ZW / XY (occurs in biology: birds, mammals, etc.)
+
+In XY and ZW systems, usually most of the chromosomes / code are hermaphrodite diploid (all of the chromosomes that undergo meiosis/crossover, everything but the sex chromosomes), but a subset of the code (the parameters being experimented on) are the ZW/XY.
+
+In ZW, Z has more data and the more experimental data, so ZZ has lower base phenotypical variance because of having two copies, but the sex experiments via displays that are costly to maintain and thus offer disadvantage (e.g., peacock).  Selection is performed by ZW (female) that has higher base phenotypical variance but lower experimental code.  The more outlandish the display of a surviving ZZ (e.g. peacock, bright male birds), the better the base code to support the cost of the display.  The costly displays help the successful ZZ stand out because the ZZ has the lower phenotypical variance.  In XY, X has more code than Y.  XY thus has higher phenotypical variance plus experimental code (in Y), so XX (female) with lower phenotypical variance selects more purely for fitness among the higher variant males (XY).
+
+
+Parameterized examples:
+
+
+have get_ploid_entities on haploid and diploid types -- return (assoc "ploid1" (list) "ploid2" (null)) -- null not needed, can be assumed -- for haploid and (assoc "ploid1" (list "ploid1") "ploid2" (list "ploid2")) for diploids.  if haploid does not have a label to return ploid entities, will return null, and so can be inferred that everything is only ploid1
+
+
+put in diploid:
+
+#get_ploid_entities
+	(assoc
+		"ploid1" (list "ploid1")
+		"ploid2" (list "ploid2")
+	)
+
+
+code to get ploids:
+	(zip
+		entities
+		(map
+			(lambda
+				;if it supports the interface, use the results, otherwise it's ploid1
+				(or
+					(call_entity (target_value) "get_ploid_entities")
+					(assoc "ploid1" (list))
+				)
+			)
+			entities
+		)
+	)
+	
+*use new contains_label command to determine sex when mating
+
+***make optional parameters for mutate to override rates of mutation, one for opcodes, another for type of mutation (delete, etc.).  Need operator that returns defaults.  nulls for inputs to mutate/mutate_entity would also use defaults
+*evolve these values to measure speed of evolution on certain problems
+
+
+#haplodiploid_crossover
+	(list
+		(assoc
+			"diploid"
+				(list
+					"crossover"
+					(list 1 "ploid1")
+					(list 1 "ploid2")
+				)
+		)
+		(assoc
+			"haploid"
+			(list
+				"crossover"
+				(list 0 "ploid1")
+				(list 0 "ploid2")
+			)
+			"diploid"
+			(list
+				"crossover"
+				(list 1 "ploid1")
+				(list 1 "ploid2")
+			)
+		)
+	)
+
+#X0_crossover
+	(list
+		(assoc
+			"diploid"
+			(list
+				"option"
+				(list 0 "ploid1")
+				(list 0 "ploid2")
+			)
+			"haploid"
+			(list
+				"select"
+				(list 1 "ploid1")
+				(list 1 "ploid2")
+			)
+		)
+		(assoc
+			"diploid"
+			(list
+				"select"
+				(list 0 "ploid1")
+				(list 0 "ploid2")
+			)
+			"haploid"
+			(list
+				"select"
+				(list 1 "ploid1")
+				(list 1 "ploid2")
+			)
+		)
+	)
+	

@@ -1,0 +1,12 @@
+(null
+
+	;reacts to the input that is passed in
+	; will return a randomized union of the two results
+	#react #diploid
+			(mix
+				(call_entity "ploid1" "react" (last (stack)))
+				(call_entity "ploid2" "react" (last (stack)))
+				0.95 0.95
+			)
+
+)

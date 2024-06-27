@@ -1,0 +1,33 @@
+(null
+
+	;reacts to the input that is passed in
+	#react #haploid
+			(seq
+				(if
+					(= 0 (get (get board 1) 1))
+					(list 1 1)
+					(= 0 (get (get board 0) 0))
+					(list 0 0)
+					(= 0 (get (get board 2) 2))
+					(list 2 2)
+					(= 0 (get (get board 0) 2))
+					(list 0 2)
+					(= 0 (get (get board 2) 0))
+					(list 2 0)
+					(= 0 (get (get board 0) 1))
+					(list 0 1)
+					(= 0 (get (get board 1) 0))
+					(list 1 0)
+					(and
+						(!= 0 player (get (get board 1) 0))
+						(!= 0 player (get (get board 1) 1))
+						(= 0 (get (get board 1) 2))
+					)
+					(list 1 2)	
+					(list
+						(floor (* 3 (rand)))
+						(floor (* 3 (rand)))
+					)
+				)
+			)
+)

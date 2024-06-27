@@ -1,0 +1,24 @@
+(null
+
+	;reacts to the input that is passed in
+	#react #haploid
+		(seq
+			(if
+				(!=
+					(=
+						(get (get board 1) 1)
+						(get (get board 0) 0)
+					)
+					0
+				)
+				(list 2 20)
+				
+				(let (assoc position (floor (rand 9)))
+					(list
+						(floor (/ position 3))
+						(floor (mod position 3))
+					)
+				)
+			)
+		)
+)

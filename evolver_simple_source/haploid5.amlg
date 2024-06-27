@@ -1,0 +1,12 @@
+(null
+
+	;reacts to the input that is passed in
+	#react #haploid
+		(let (assoc
+			flattened (zip (range 0 8)
+					(append (get board 0) (get board 1) (get board 2))
+				)
+			)
+			(list 0 0)
+		)
+)

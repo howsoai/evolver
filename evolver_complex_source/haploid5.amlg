@@ -1,0 +1,58 @@
+(null
+
+	;reacts to the input that is passed in
+	#react #haploid
+		(let (assoc
+			flattened (zip (range 0 8)
+					(append (get board 0) (get board 1) (get board 2))
+				)
+			)
+			
+			(let (assoc
+				open_positions
+						(indices
+							(filter
+								(lambda (= 0 (current_value)))
+								flattened
+							)
+						)
+				my_positions
+						(indices
+							(filter
+								(lambda (= player (current_value)))
+								flattened
+							)
+						)
+				opponent_positions
+						(indices
+							(filter
+								(lambda (!= player (current_value) 0))
+								flattened
+							)
+						)
+					
+				)
+				
+				(if 
+					(or
+						(and
+							(contains_index my_positions 4)
+							(contains_index my_positions 0)
+							(contains_index open_positions 8)
+						)
+						(and
+							(contains_index opponent_positions 4)
+							(contains_index opponent_positions 0)
+							(contains_index open_positions 8)
+						)
+					)
+					(list 2 2)
+				)
+				
+				(list
+					(floor (/ position 3))
+					(floor (mod position 3))
+				)
+			)
+		)
+)
