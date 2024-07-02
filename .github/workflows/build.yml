@@ -41,7 +41,7 @@ jobs:
   test:
     name: Fuzz tests (${{ matrix.amlg-postfix }})
     needs: ["metadata"]
-    runs-on: howso-ubuntu-runner-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         amlg-postfix: ['-st', '-mt']
@@ -90,8 +90,7 @@ jobs:
         # Set stack size and run (stack size adjustments cannot be done with cmake on Linux)
         echo "Note: output is supressed due to length. See build artifacts for full logs."
         echo "Running..."
-        ulimit -s 524288
-        ./amalgam${{ matrix.amlg-postfix }} tic_tac_toe_evolver.amlg -target-time 300 > logs.txt 2>&1 
+        ulimit -s 524288 && ./amalgam${{ matrix.amlg-postfix }} tic_tac_toe_evolver.amlg -target-time 300 > logs.txt 2>&1 
 
     - name: Compress 'evolve' directory
       if: always()

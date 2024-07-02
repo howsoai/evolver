@@ -41,7 +41,7 @@
 				(call_entity entity "react" (assoc
 					board board
 					player player
-					) 30000 30000 )
+					) 2000 2000 )
 				
 		#get_player_1_move
 			(call_container "^get_move_from_entity" (assoc
