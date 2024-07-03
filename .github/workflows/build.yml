@@ -90,6 +90,7 @@ jobs:
         # Set stack size and run (stack size adjustments cannot be done with cmake on Linux)
         echo "Note: output is supressed due to length. See build artifacts for full logs."
         echo "Running..."
+        ulimit -a
         ulimit -s 524288 && ./amalgam${{ matrix.amlg-postfix }} tic_tac_toe_evolver.amlg -target-time 300 > logs.txt 2>&1 
 
     - name: Compress 'evolve' directory
