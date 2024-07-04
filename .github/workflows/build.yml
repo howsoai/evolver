@@ -23,6 +23,10 @@ on:
       optional-release-tag:
         required: false
         type: string
+      amalgam-build:
+        required: false
+        type: string
+        default: 'latest'
 
 defaults:
   run:
@@ -96,12 +100,13 @@ jobs:
 
     - name: Compress 'evolve' directory
       if: always()
+      continue-on-error: true
       run: |
         tar -czvf evolver${{ matrix.amlg-postfix }}.tar.gz evolver logs.txt
-        tar -czvf evolver${{ matrix.amlg-postfix }}.tar.gz logs.txt
 
     - name: Upload 'evolve' directory
       if: always()
+      continue-on-error: true
       uses: actions/upload-artifact@v4
       with:
         name: evolver${{ matrix.amlg-postfix }}-artifacts
