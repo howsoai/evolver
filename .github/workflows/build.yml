@@ -47,6 +47,7 @@ jobs:
     needs: ["metadata"]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         amlg-postfix: ['-st', '-mt']
 
