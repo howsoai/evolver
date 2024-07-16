@@ -97,7 +97,6 @@ jobs:
         echo "Running..."
         ulimit -s 524288
         ulimit -a
-        cat /etc/security/limits.conf
         ./amalgam${{ matrix.amlg-postfix }} tic_tac_toe_evolver.amlg -target-time 300 > logs.txt 2>&1 
 
     - name: Compress 'evolve' directory
