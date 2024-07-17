@@ -82,13 +82,6 @@ jobs:
       run: |
         ./amalgam${{ matrix.amlg-postfix }} --version
 
-    - name: Collect Workflow Telemetry
-      uses: catchpoint/workflow-telemetry-action@v2
-      with:
-        comment_on_pr: off
-        proc_trace_chart_show: off
-        proc_trace_table_show: off
-
     - name: Run Evolver
       id: run
       run: |
@@ -96,8 +89,7 @@ jobs:
         echo "Note: output is supressed due to length. See build artifacts for full logs."
         echo "Running..."
         ulimit -s 524288
-        ulimit -a
-        ./amalgam${{ matrix.amlg-postfix }} tic_tac_toe_evolver.amlg -target-time 300 > logs.txt 2>&1 
+        ./amalgam${{ matrix.amlg-postfix }} tic_tac_toe_evolver.amlg -target-time 180 > logs.txt 2>&1 
 
     - name: Compress 'evolve' directory
       if: always()
