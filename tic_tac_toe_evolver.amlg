@@ -41,7 +41,11 @@
 				(call_entity entity "react" (assoc
 					board board
 					player player
-					) 2000 2000 200)
+					)
+					2000
+					;count the entity size toward total memory allowed to be used
+					(- 2000 (total_entity_size entity))
+					200)
 				
 		#get_player_1_move
 			(call_container "^get_move_from_entity" (assoc
