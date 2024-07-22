@@ -45,7 +45,7 @@ jobs:
   test:
     name: Fuzz tests (${{ matrix.amlg-postfix }})
     needs: ["metadata"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -79,8 +79,9 @@ jobs:
         mv amalgam/lib/linux/amd64/bin/amalgam${{ matrix.amlg-postfix }} amalgam${{ matrix.amlg-postfix }}
         chmod +x amalgam${{ matrix.amlg-postfix }}
 
-    - name: Print Amalgam version
+    - name: Print Amalgam/gcc version
       run: |
+        gcc --version
         ./amalgam${{ matrix.amlg-postfix }} --version
 
     - name: Run Evolver
