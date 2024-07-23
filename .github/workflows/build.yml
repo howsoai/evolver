@@ -46,7 +46,6 @@ jobs:
     name: Fuzz tests (${{ matrix.amlg-postfix }})
     needs: ["metadata"]
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -85,6 +84,7 @@ jobs:
 
     - name: Run Evolver
       id: run
+      timeout-minutes: 15
       run: |
         # Set stack size and run (stack size adjustments cannot be done with cmake on Linux)
         echo "Note: output is supressed due to length. See build artifacts for full logs."
