@@ -84,13 +84,21 @@ jobs:
 
     - name: Run Evolver
       id: run
-      timeout-minutes: 15
+      timeout-minutes: 6
       run: |
         # Set stack size and run (stack size adjustments cannot be done with cmake on Linux)
         echo "Note: output is supressed due to length. See build artifacts for full logs."
+        df -h
         echo "Running..."
         ulimit -s 524288
-        ./amalgam${{ matrix.amlg-postfix }} tic_tac_toe_evolver.amlg -target-time 180 > logs.txt 2>&1 
+        ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 180 > logs.txt 2>&1 
+        echo "Done"
+
+    - name: Display logs.txt (tail)
+      if: always()
+      continue-on-error: true
+      run: |
+        tail -n 100 logs.txt
 
     - name: Compress 'evolve' directory
       if: always()
