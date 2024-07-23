@@ -92,6 +92,7 @@ jobs:
         echo "Running..."
         ulimit -s 524288
         sudo apt-get install -y gdb
+        chmod +x debug.sh
         ./debug.sh
         #./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 180 > logs.txt 2>&1 
         echo "Done"
