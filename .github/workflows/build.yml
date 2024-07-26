@@ -99,12 +99,13 @@ jobs:
         echo "Running..."
 
         # Capture GDB output
-        gdb_output=$(gdb -batch -ex run -ex backtrace --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300 > logs.txt 2>&1)
+        gdb_output=$(gdb -batch -ex run -ex backtrace --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300)
         gdb_exit_code=$?
         echo "$gdb_output" >> logs.txt
 
         # Evaluate GDB exit code and exit this workflow accordingly
         if [[ $gdb_exit_code -ne 0 ]]; then
+          echo "GDB has exited"
           echo "$gdb_output" | tail -n 6
           # If GDB exited with an error but the test process passed, exit 0
           if echo "$gdb_output" | tail -n 6 | grep -q "exited normally"; then
