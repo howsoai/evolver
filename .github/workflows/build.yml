@@ -83,8 +83,8 @@ jobs:
         ./amalgam${{ matrix.amlg-postfix }} --version
 
     - name: Run Evolver
+      timeout-minutes: 20
       id: run
-      timeout-minutes: 15
       run: |
         # Install GDB
         sudo apt-get install -y gdb
@@ -98,8 +98,8 @@ jobs:
         echo "Note: output is supressed due to length. See build artifacts for full logs."
         echo "Running..."
 
-        # Capture GDB output
-        gdb_output=$(gdb -batch -ex run -ex backtrace --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300)
+        # Capture GDB output (15 minute timeout)
+        gdb_output=$(timeout 900 gdb -batch -ex run -ex backtrace --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300)
         gdb_exit_code=$?
         echo "$gdb_output" >> logs.txt
 
@@ -116,7 +116,7 @@ jobs:
           fi
         else
           # If GDB exited with code 0, there was a segfault
-          echo "$gdb_output"
+          echo "$gdb_output" | tail -n 200
           exit 139
         fi
 
