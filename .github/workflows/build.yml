@@ -83,6 +83,7 @@ jobs:
         ./amalgam${{ matrix.amlg-postfix }} --version
 
     - name: Run Evolver
+      timeout-minutes: 20
       id: run
       run: |
         # Install GDB
@@ -115,7 +116,7 @@ jobs:
           fi
         else
           # If GDB exited with code 0, there was a segfault
-          echo "$gdb_output"
+          echo "$gdb_output" | tail -n 200
           exit 139
         fi
 
