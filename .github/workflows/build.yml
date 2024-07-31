@@ -102,9 +102,6 @@ jobs:
         gdb_exit_code=$?
         echo "$gdb_output" >> logs.txt
 
-        ls
-        cat logs.txt | tail -n 6
-
         # Evaluate GDB exit code and exit this workflow accordingly
         if [[ $gdb_exit_code -ne 0 ]]; then
           echo "GDB has exited"
