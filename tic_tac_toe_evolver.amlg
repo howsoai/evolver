@@ -42,10 +42,19 @@
 					board board
 					player player
 					)
+					;total number of execution cycles
 					2000
 					;count the entity size toward total memory allowed to be used
 					(- 2000 (total_entity_size entity))
-					200)
+					;limit stack depth to something reasonable
+					200
+					;maximum contained entities
+					5
+					;maximum entity depth
+					3
+					;max entity name length
+					25
+					)
 				
 		#get_player_1_move
 			(call_container "^get_move_from_entity" (assoc
