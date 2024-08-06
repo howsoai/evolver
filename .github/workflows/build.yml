@@ -45,7 +45,7 @@ jobs:
   test:
     name: Fuzz tests (${{ matrix.amlg-postfix }})
     needs: ["metadata"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -90,12 +90,6 @@ jobs:
         sudo apt-get install -y gdb
 
         echo "GDB installation complete"
-        gdb --version
-
-        echo "Checking for updates..."
-        sudo apt-get update
-        sudo apt-get upgrade gdb
-
         gdb --version
 
         # Don't immediately fail if GDB exits with a non-zero code
