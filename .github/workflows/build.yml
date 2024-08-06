@@ -88,7 +88,6 @@ jobs:
       run: |
         # Install GDB
         sudo apt-get install -y gdb
-
         echo "GDB installation complete"
         gdb --version
 
