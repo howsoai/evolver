@@ -100,7 +100,16 @@ jobs:
         echo "Running..."
 
         # Capture GDB output (15 minute timeout)
-        gdb_output=$(timeout 900 gdb -batch -ex run -ex backtrace --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300)
+        gdb_output=$(timeout 900 gdb -batch -ex "handle SIGUSR1 stop print pass" \
+                                 -ex "handle SIGUSR2 stop print pass" \
+                                 -ex "handle SIGABRT stop print pass" \
+                                 -ex "handle SIGFPE stop print pass" \
+                                 -ex "handle SIGBUS stop print pass" \
+                                 -ex "catch throw" \
+                                 -ex "catch catch" \
+                                 -ex "run" \
+                                 -ex "backtrace" \
+                                 --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300)
         gdb_exit_code=$?
         echo "$gdb_output" >> logs.txt
 
