@@ -88,7 +88,15 @@ jobs:
       run: |
         # Install GDB
         sudo apt-get install -y gdb
+
         echo "GDB installation complete"
+        gdb --version
+
+        echo "Checking for updates..."
+        sudo apt-get update
+        sudo apt-get upgrade gdb
+
+        gdb --version
 
         # Don't immediately fail if GDB exits with a non-zero code
         set +e
