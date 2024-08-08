@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        amlg-postfix: ['-st', '-mt-afmi']
+        amlg-postfix: ['-st', '-st']
 
     steps:
 
@@ -60,26 +60,9 @@ jobs:
       with:
         python-version: "3.11"
 
-    - name: Download Amalgam linux-amd64
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        run_id=$(printf "%s" '${{ needs.metadata.outputs.upstream-details }}' | jq -r '."amalgam".run_id')
-        run_type=$(printf "%s" '${{ needs.metadata.outputs.upstream-details }}' | jq -r '."amalgam".run_type')
-        gh $run_type download -D amalgam/lib/linux/amd64 -R "howsoai/amalgam" -p "*linux-amd64*" "$run_id"
-        # Needed because release/non-release downloads are different structure
-        cd amalgam/lib/linux/amd64 && if [ ! -f *.tar.gz ]; then mv */*.tar.gz ./; fi && tar -xvzf *.tar.gz
-
-    - name: Extract Amalgam binaries
-      run: |
-        cd amalgam/lib
-        find . -type d -name lib -exec sh -c 'mv {}/* "$(dirname {})"' \;
-        cd ../..
-        mv amalgam/lib/linux/amd64/bin/amalgam${{ matrix.amlg-postfix }} amalgam${{ matrix.amlg-postfix }}
-        chmod +x amalgam${{ matrix.amlg-postfix }}
-
     - name: Print Amalgam version
       run: |
+        chmod +x amalgam-st
         ./amalgam${{ matrix.amlg-postfix }} --version
 
     - name: Run Evolver
