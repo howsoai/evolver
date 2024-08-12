@@ -350,7 +350,7 @@
 		(declare (assoc
 				id (null)
 				offspring_sex (null)
-				mutation_rate 0.03
+				mutation_rate 0.01
 				mutation_operator_weights (null)
 				mutation_type_weights (null)
 				)
@@ -365,7 +365,7 @@
 					(assign (assoc id (first (create_entities id diploid_react_base_template)) ))
 
 					;perform mixing
-					(mix_entities (list diploid "ploid1") (list diploid "ploid2") 0.5 0.5 0.5 0.2 (list id "ploid1_temp"))
+					(mix_entities (list diploid "ploid1") (list diploid "ploid2") 0.5 0.5 0.95 0 (list id "ploid1_temp"))
 					(clone_entities haploid (list id "ploid2_temp"))
 
 					;mutate
@@ -379,7 +379,7 @@
 
 				;haploid
 				;use haplodiploidy mechanism to make a haploid (male) from diploid (female)
-				(let (assoc temp_id (mix_entities (list diploid "ploid1") (list diploid "ploid2")))
+				(let (assoc temp_id (mix_entities (list diploid "ploid1") (list diploid "ploid2") 0.5 0.5 0.95))
 					(mutate_entity temp_id mutation_rate id mutation_operator_weights mutation_type_weights)
 					(destroy_entities temp_id)
 					id
@@ -495,7 +495,7 @@
 		fraction_diploids_reproducing 0.8
 		max_num_haploid_matings 5
 		metadata null
-		mutation_rate 0.03
+		mutation_rate 0.01
 		mutation_operator_weights (null)
 		mutation_type_weights (null)
 		)
