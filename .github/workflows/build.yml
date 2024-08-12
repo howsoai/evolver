@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        amlg-postfix: ['-st', '-mt-afmi']
+        amlg-postfix: ['-st-afmi', '-mt-afmi']
 
     steps:
 
@@ -99,26 +99,42 @@ jobs:
         echo "Note: output is supressed due to length. See build artifacts for full logs."
         echo "Running..."
 
-        # Capture GDB output (15 minute timeout)
-        gdb_output=$(timeout 900 gdb -batch -ex run -ex backtrace --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300)
-        gdb_exit_code=$?
+        # Run Evolver with GDB
+        # However, sent a SIGINT after 6 minutes (indicating a hanging Evolver) to get a stacktrace
+        TIMEOUT=360
+
+        # Run GDB in the background
+        gdb_output_file=$(mktemp)
+        if [[ "${{ matrix.amlg-postfix }}" == *"mt"* ]]; then
+          gdb -batch -ex run -ex "thread apply all bt" --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300 > "$gdb_output_file" 2>&1 &
+          GDB_PID=$!
+        else
+          gdb -batch -ex run -ex bt --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300 > "$gdb_output_file" 2>&1 &
+          GDB_PID=$!
+        fi
+
+        echo "GDB PID: $GDB_PID"
+
+        # Set up a timer to send SIGINT to GDB after the timeout
+        {
+            sleep $TIMEOUT
+            kill -SIGINT $GDB_PID
+        } &
+        wait $GDB_PID
+        gdb_output=$(cat "$gdb_output_file")
+
+        # Save output to logs.txt, uploaded later
         echo "$gdb_output" >> logs.txt
 
+        # Print a reasonable amount of the logs to the console
+        echo "$gdb_output" | tail -n 400
+
         # Evaluate GDB exit code and exit this workflow accordingly
-        if [[ $gdb_exit_code -ne 0 ]]; then
-          echo "GDB has exited"
-          echo "$gdb_output" | tail -n 6
-          # If GDB exited with an error but the test process passed, exit 0
-          if echo "$gdb_output" | tail -n 6 | grep -q "exited normally"; then
-            exit 0
-          # Else, the test process failed, exit 1
-          else
-            exit 1
-          fi
+        if echo "$gdb_output" | tail -n 100 | grep -q "exited normally"; then
+          exit 0
+        # Else, something failed, exit 1
         else
-          # If GDB exited with code 0, there was a segfault
-          echo "$gdb_output" | tail -n 200
-          exit 139
+          exit 1
         fi
 
     - name: Compress 'evolve' directory
