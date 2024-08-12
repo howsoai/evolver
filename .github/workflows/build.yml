@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        amlg-postfix: ['-st', '-mt-afmi']
+        amlg-postfix: ['-st-afmi', '-mt-afmi']
 
     steps:
 
@@ -121,26 +121,20 @@ jobs:
             kill -SIGINT $GDB_PID
         } &
         wait $GDB_PID
-        gdb_exit_code=$?
         gdb_output=$(cat "$gdb_output_file")
+
         # Save output to logs.txt, uploaded later
         echo "$gdb_output" >> logs.txt
 
+        # Print a reasonable amount of the logs to the console
+        echo "$gdb_output" | tail -n 400
+
         # Evaluate GDB exit code and exit this workflow accordingly
-        if [[ $gdb_exit_code -ne 0 ]]; then
-          echo "GDB has exited"
-          echo "$gdb_output" | tail -n 6
-          # If GDB exited with an error but the test process passed, exit 0
-          if echo "$gdb_output" | tail -n 6 | grep -q "exited normally"; then
-            exit 0
-          # Else, the test process failed, exit 1
-          else
-            exit 1
-          fi
+        if echo "$gdb_output" | tail -n 100 | grep -q "exited normally"; then
+          exit 0
+        # Else, something failed, exit 1
         else
-          # If GDB exited with code 0, there was a segfault
-          echo "$gdb_output" | tail -n 400
-          exit 139
+          exit 1
         fi
 
     - name: Compress 'evolve' directory
