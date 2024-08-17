@@ -47,7 +47,7 @@
 					;count the entity size toward total memory allowed to be used
 					(- 2000 (total_entity_size entity))
 					;limit stack depth to something reasonable
-					100
+					70
 					;maximum contained entities
 					5
 					;maximum entity depth
