@@ -86,6 +86,7 @@ jobs:
       timeout-minutes: 20
       id: run
       run: |
+        sudo apt-get update
         # Install GDB
         sudo apt-get install -y gdb
         echo "GDB installation complete"
