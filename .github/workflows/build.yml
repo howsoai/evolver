@@ -82,13 +82,6 @@ jobs:
       run: |
         ./amalgam${{ matrix.amlg-postfix }} --version
 
-    - name: Collect Workflow Telemetry
-      uses: catchpoint/workflow-telemetry-action@v2
-      with:
-        comment_on_pr: off
-        proc_trace_chart_show: off
-        proc_trace_table_show: off
-
     - name: Run Evolver
       timeout-minutes: 20
       id: run
@@ -107,8 +100,25 @@ jobs:
         echo "Note: output is supressed due to length. See build artifacts for full logs."
         echo "Running..."
 
+        # Function to monitor memory and disk usage every few seconds
+        monitor_resources() {
+            while true; do
+                echo "------ Resource Usage ------"
+                echo "Memory usage (in KB):"
+                cat /proc/meminfo | grep MemAvailable
+                echo "Disk usage:"
+                df -h /
+                echo "----------------------------"
+                sleep 10
+            done
+        }
+
+        # Start resource monitoring in the background
+        monitor_resources & 
+        MONITOR_PID=$!
+
         # Run Evolver with GDB
-        # However, sent a SIGINT after 6 minutes (indicating a hanging Evolver) to get a stacktrace
+        # However, send a SIGINT after 6 minutes (indicating a hanging Evolver) to get a stacktrace
         TIMEOUT=360
 
         # Run GDB in the background
@@ -130,6 +140,9 @@ jobs:
         } &
         wait $GDB_PID
         gdb_output=$(cat "$gdb_output_file")
+
+        # Kill the resource monitor process after GDB completes
+        kill $MONITOR_PID
 
         # Save output to logs.txt, uploaded later
         echo "$gdb_output" >> logs.txt
