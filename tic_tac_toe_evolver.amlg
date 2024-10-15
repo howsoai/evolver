@@ -10,7 +10,8 @@
 	))
 
 	(load_entity "./tic_tac_toe.amlg" "TicTacToeGame")
-	(load_persistent_entity "./evolver.amlg" "evolver" (true))
+	(load_entity "./evolver.amlg" "evolver"  (null)
+		(true) {escape_resource_name (true) escape_contained_resource_names (true)})
 	(set_entity_rand_seed "evolver" (rand))
 
 	(null
