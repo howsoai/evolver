@@ -5,8 +5,8 @@
 	)
 	
 	(declare (assoc
-		max_num_generations (or (get options "-num-generations") .infinity)
-		target_time (or (get options "-target-time") .infinity)
+		max_num_generations (or (+ (get options "-num-generations")) .infinity)
+		target_time (or (+ (get options "-target-time")) .infinity)
 	))
 
 	(load_entity "./tic_tac_toe.amlg" "TicTacToeGame")
