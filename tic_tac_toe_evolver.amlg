@@ -55,6 +55,8 @@
 					3
 					;max entity name length
 					25
+					;suppress warning return
+					(false)
 					)
 				
 		#get_player_1_move
