@@ -111,10 +111,10 @@ jobs:
         # Run GDB in the background
         gdb_output_file=$(mktemp)
         if [[ "${{ matrix.amlg-postfix }}" == *"mt"* ]]; then
-          gdb -batch -ex run -ex "thread apply all bt" --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300 > "$gdb_output_file" 2>&1 &
+          gdb -batch -ex run -ex "thread apply all bt" --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory -t trace.amlg tic_tac_toe_evolver.amlg -target-time 300 > "$gdb_output_file" 2>&1 &
           GDB_PID=$!
         else
-          gdb -batch -ex run -ex bt --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory tic_tac_toe_evolver.amlg -target-time 300 > "$gdb_output_file" 2>&1 &
+          gdb -batch -ex run -ex bt --args ./amalgam${{ matrix.amlg-postfix }} --debug-internal-memory -t trace.amlg tic_tac_toe_evolver.amlg -target-time 300 > "$gdb_output_file" 2>&1 &
           GDB_PID=$!
         fi
 
@@ -155,6 +155,14 @@ jobs:
       with:
         name: evolver${{ matrix.amlg-postfix }}-artifacts
         path: evolver${{ matrix.amlg-postfix }}.tar.gz
+
+    - name: Upload transaction logs
+      if: always()
+      continue-on-error: true
+      uses: actions/upload-artifact@v4
+      with:
+        name: evolver${{ matrix.amlg-postfix }}-transaction-logs
+        path: trace.amlg
 
   generate-changelog:
     if: inputs.build-type == 'release'
