@@ -360,7 +360,7 @@
 				)
 
 				;diploid
-				;use haplodiploidy mechanism to make a haploid (male) from diploid (female) and haploid (male)
+				;use haplodiploidy mechanism to make a diploid (female) from diploid (female) and haploid (male)
 				(seq
 					(assign (assoc id (first (create_entities id diploid_react_base_template)) ))
 
