@@ -11,7 +11,7 @@
 
 	(load_entity "./tic_tac_toe.amlg" "TicTacToeGame")
 	(load_entity "./evolver.amlg" "evolver"  (null)
-		(true) {escape_resource_name (true) escape_contained_resource_names (true)})
+		.true {escape_resource_name .true escape_contained_resource_names .true})
 	(set_entity_rand_seed "evolver" (rand))
 
 	(null
@@ -56,7 +56,7 @@
 					;max entity name length
 					25
 					;suppress warning return
-					(false)
+					.false
 					)
 				
 		#get_player_1_move

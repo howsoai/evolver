@@ -47,7 +47,7 @@
 			))
 		
 		;checks the given board to see if there is a winner, if so, returns the player
-		; otherwise returns (false), or -1 if tie
+		; otherwise returns .false, or -1 if tie
 		#check_win
 			(or
 			
@@ -153,13 +153,13 @@
 				player 0
 				cur_move_row 1
 				cur_move_column 1
-				winning_player (false)
+				winning_player .false
 				turns 0
 				max_num_turns 20
 			) )
 		
 		
-			(while (and (= winning_player (false)) (< turns max_num_turns))
+			(while (and (= winning_player .false) (< turns max_num_turns))
 				
 				;set current player
 				(assign (assoc player (+ (mod player 2) 1)))
