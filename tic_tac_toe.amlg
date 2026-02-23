@@ -18,7 +18,6 @@
 	; row: the row position to move to
 	; column: the column position to move to
 	make_move
-
 		(if
 			;in range, and unset then set the new value
 			(and	(<= 0 row 2)
@@ -155,8 +154,7 @@
 			turns 0
 			max_num_turns 20
 		) )
-	
-	
+
 		(while (and (= winning_player .false) (< turns max_num_turns))
 			
 			;set current player
@@ -190,7 +188,7 @@
 			(assign (assoc winning_player (call check_win (assoc board board))))
 		)
 		
-		(assoc
+		{
 			board board
 			winning_player winning_player
 			player_1_score (if  (= winning_player 1)  50
@@ -201,14 +199,12 @@
 								(= winning_player -1) 40
 								(call count_positions (assoc player 2 board board))
 							)
-			
-			)
-
+		}
 	)
 
 	;main
 	(null)
-	(seq		
+	(seq
 		;if the program is run directly, this will play the game
 		; otherwise, if loaded as a library, this part will not be run
 		(let (call play_game (assoc player_controllers (list get_user_move get_user_move)))

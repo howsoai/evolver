@@ -22,27 +22,27 @@
 			(list cur_move_row cur_move_column)
 		)
 	)
-	
+
 	^get_move_from_entity
-			(call_entity entity "react" (assoc
-				board board
-				player player
-				)
-				;total number of execution cycles
-				2000
-				;count the entity size toward total memory allowed to be used
-				(- 2000 (total_entity_size entity))
-				;limit stack depth to something reasonable
-				50
-				;maximum contained entities
-				5
-				;maximum entity depth
-				3
-				;max entity name length
-				25
-				;suppress warning return
-				.false
-				)
+		(call_entity entity "react" (assoc
+			board board
+			player player
+			)
+			;total number of execution cycles
+			2000
+			;count the entity size toward total memory allowed to be used
+			(- 2000 (total_entity_size entity))
+			;limit stack depth to something reasonable
+			50
+			;maximum contained entities
+			5
+			;maximum entity depth
+			3
+			;max entity name length
+			25
+			;suppress warning return
+			.false
+		)
 			
 	get_player_1_move
 		(call_container "^get_move_from_entity" (assoc
@@ -81,10 +81,6 @@
 		(load_entity "./evolver.amlg" "evolver" (null)
 			.true {escape_resource_name .true escape_contained_resource_names .true})
 		(set_entity_rand_seed "evolver" (rand))
-		
-		(declare (assoc
-					player_2_ai "male6"
-		) )
 
 		(call_entity "evolver" "initialize_population_manifest")
 		
