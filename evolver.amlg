@@ -1,23 +1,24 @@
 ;manages a population of entities for genetic programming
 ;geared to use a haploid/diploid sexual reproduction genetic programming paradigm
-(null
+{
 
 	;creates the _population_manifest entity to keep track of individuals' scores within the population
-	#initialize_population_manifest
+	initialize_population_manifest
 		(if (not (contains_entity "_population_manifest"))
-			(create_entities "_population_manifest" (lambda
-				(null
+			(create_entities "_population_manifest"
+				{
+					metadata
 					;key is the entity name
 					;value is an assoc of the following:
 					; age : number of population cycles it has survived
 					; score : most recent score
-					(##metadata assoc)
-				)
-			))
+					{}
+				}
+			)
 		)
 
 	;removes unused records for individuals that no longer exist
-	#remove_unused_records
+	remove_unused_records
 		(let (assoc
 				living (zip (contained_entities) ))
 
@@ -26,15 +27,15 @@
 				(assoc metadata
 					(filter
 						(lambda (contains_index living (current_index)))
-						(call_entity "_population_manifest" "metadata")
+						(retrieve_from_entity "_population_manifest" "metadata")
 					)
 				)
 			)
 		)
 
 	;adds new records for individuals that are not accounted for
-	#discover_new_individuals
-		(let (assoc metadata (call_entity "_population_manifest" "metadata"))
+	discover_new_individuals
+		(let (assoc metadata (retrieve_from_entity "_population_manifest" "metadata"))
 			(let (assoc
 					new_entities
 						(filter
@@ -66,8 +67,8 @@
 	; age_effect_rate is the multiplier per cycle on the age modifier for score
 	; age_effect_magnitude is the  reciprocal of the percent of the score affected by the aging one population cycle
 	; carrying_capacity is the maximum number of entities that are allowed to survive
-	#constrain_population
-		(let (assoc metadata (call_entity "_population_manifest" "metadata"))
+	constrain_population
+		(let (assoc metadata (retrieve_from_entity "_population_manifest" "metadata"))
 			(let (assoc
 						to_cull (indices metadata)
 
@@ -121,19 +122,19 @@
 		)
 
 	;increments the age of the entire population
-	#age_population
+	age_population
 		(assign_to_entities "_population_manifest" (assoc metadata
 			(map
 				(lambda
 					(set (current_value) "age"
 						(+ 1 (get (current_value) "age"))))
-				(call_entity "_population_manifest" "metadata")
+				(retrieve_from_entity "_population_manifest" "metadata")
 			)
 		))
 
 
 	;updates the score of an individual specified by the parameters id and score respectively
-	#update_score
+	update_score
 		(declare (assoc
 				id (null)
 				metadata (call_entity "_population_manifest" "metadata")
@@ -185,42 +186,42 @@
 
 	;evaluates to an exponentially distributed random number with mean
 	; specified by the parameter score
-	#resample_score
+	resample_score
 		(* score (- (log (- 1.0 (rand)))))
 
 	;gets a random individual for competition purposes
 	; affect probability by sex, age, or score?
-	#get_random_individual
+	get_random_individual
 		(rand (filter
 			(lambda (!= "_population_manifest" (current_value)))
 			(contained_entities)
 		))
 
 	;returns a list of all individuals in the current set
-	#get_all_individuals
+	get_all_individuals
 		(filter
 			(lambda (!= "_population_manifest" (current_value)))
 			(contained_entities)
 		)
 
 	;returns a list of the individuals that are haploids
-	#get_haploids
+	get_haploids
 		(contained_entities
 					(list (query_exists "haploid") )
 		)
 
 	;returns a list of the individuals that are diploids
-	#get_diploids
+	get_diploids
 		(contained_entities
 			(list (query_exists "diploid") )
 		)
 
 	;returns an assoc of entity ids and scores.  if entities is specified, then it will only return the scores for those entities
 	; metadata can also be specified, but if omitted, it uses the metadata contained in this entity
-	#get_individual_scores
+	get_individual_scores
 		(declare (assoc
 				entities (call get_all_individuals)
-				metadata (call_entity "_population_manifest" "metadata")
+				metadata (retrieve_from_entity "_population_manifest" "metadata")
 			)
 
 			(zip
@@ -235,10 +236,10 @@
 	;takes in a list of entities and metadata, constrains them
 	; to the number represented by take_max_fraction (e.g., the best 10%) and take_min_n (e.g., at least 3)
 	; defaults to haploids only
-	#get_individuals_with_best_scores
+	get_individuals_with_best_scores
 		(declare (assoc
 			entities (call get_haploids)
-			metadata (call_entity "_population_manifest" "metadata")
+			metadata (retrieve_from_entity "_population_manifest" "metadata")
 			take_max_fraction 0.125
 			take_min_n 3
 			)
@@ -267,7 +268,7 @@
 		)
 
 	;determines the sex of the entity passed in id, returning "diploid" or "haploid" as appropriate, null otherwise
-	#determine_sex
+	determine_sex
 		(if
 			(contains_label id "diploid")
 			"diploid"
@@ -278,7 +279,7 @@
 
 	;returns a size for the entity passed in id, a proxy for complexity
 	; if haploid, will return the size of the ploid, if diploid, will return the larger of either of the ploid
-	#get_individual_size_complexity
+	get_individual_size_complexity
 		(if
 			(contains_label id "diploid")
 			(max
@@ -291,21 +292,21 @@
 		)
 
 	;template for creating the base entity for diploid
-	#diploid_react_base_template
-		(null
+	diploid_react_base_template
+		{
 			;reacts to the input that is passed in
 			; will return a randomized union of the two results
-			##react ##diploid
+			react
 					(mix
 						(call_entity "ploid1" "react" (args))
 						(call_entity "ploid2" "react" (args))
 						0.95 0.95
 					)
-		)
+		}
 
 	;creates a happloid given code with optional id
 	;returns the id of the entity created
-	#create_haploid
+	create_haploid
 		(declare (assoc
 			id (null)
 			code (null)
@@ -322,7 +323,7 @@
 
 	;creates a diploid given code1 and code2 with optional id
 	;returns the id of the entity created
-	#create_diploid
+	create_diploid
 		(declare (assoc
 			id (null)
 			code1 (null)
@@ -346,7 +347,7 @@
 	; if the parameter mutation_rate is specified, it will use that as the mutation rate
 	; if the parameter mutation_operator_weights is specified, it will use that for the mutation operator weights (see mutate/mutate_entity documentation)
 	; if the parameter mutation_type_weights is specified, it will use that for the mutation type weights (see mutate/mutate_entity documentation)
-	#mate
+	mate
 		(declare (assoc
 				id (null)
 				offspring_sex (null)
@@ -414,7 +415,7 @@
 	; to an optional merged_id
 	;returns the new id of the merged entity
 	;if the sexes do not match, then nothing is performed
-	#merge
+	merge
 		(declare (assoc
 				id1 (null)
 				id2 (null)
@@ -443,7 +444,7 @@
 
 	;takes haploid1 and haploid2, combines all contained entities,
 	; and creates a diploid blend of the two
-	#blend_2_haploids_to_diploid
+	blend_2_haploids_to_diploid
 		;copy out both ploids from each haploid
 		;set haploid code to null
 		;merge entities
@@ -463,7 +464,7 @@
 
 	;takes diploid and splits each ploid into the variables id1 and id2
 	; evaluates to a list of the ids of the two new offspring
-	#split_diploid_to_2_haploids
+	split_diploid_to_2_haploids
 		(declare (assoc
 				id1 (null)
 				id2 (null)
@@ -477,7 +478,7 @@
 	;takes in a list of entities and metadata and randomizes the order
 	; based on resampling the scores
 	;returns a list with the randomized best at the end, least best at the front
-	#randomize_individual_order (seq
+	randomize_individual_order (seq
 
 		;resample scores
 		(assign (assoc
@@ -519,7 +520,7 @@
 	; if the parameter mutation_rate is specified, it will use that as the mutation rate
 	; if the parameter mutation_operator_weights is specified, it will use that for the mutation operator weights (see mutate/mutate_entity documentation)
 	; if the parameter mutation_type_weights is specified, it will use that for the mutation type weights (see mutate/mutate_entity documentation)
-	#population_cycle (declare (assoc
+	population_cycle (declare (assoc
 		age_effect_rate 5
 		age_effect_magnitude 50
 		carrying_capacity 80
@@ -527,7 +528,7 @@
 		fraction_haploids_reproducing 0.4
 		fraction_diploids_reproducing 0.8
 		max_num_haploid_matings 5
-		metadata null
+		metadata (null)
 		mutation_rate 0.01
 		mutation_operator_weights (null)
 		mutation_type_weights (null)
@@ -536,7 +537,7 @@
 		(call remove_unused_records)
 
 		;get a clean list of the data after the records have been cleaned out
-		(assign (assoc metadata (call_entity "_population_manifest" "metadata")))
+		(assign (assoc metadata (retrieve_from_entity "_population_manifest" "metadata")))
 
 		;perform population cycle
 		(let (assoc
@@ -639,4 +640,4 @@
 
 		(call discover_new_individuals)
 	)
-)
+}
