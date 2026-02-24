@@ -314,10 +314,7 @@
 
 			(create_entities
 				id
-				(set_type
-					(list (set_labels code (list "react" "haploid")))
-					(lambda (null))
-				)
+				(associate "react" code)
 			)
 		)
 
