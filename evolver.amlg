@@ -206,14 +206,29 @@
 
 	;returns a list of the individuals that are haploids
 	get_haploids
-		(contained_entities
-					(list (query_exists "haploid") )
+		(filter
+			(lambda
+				(and
+					(= 0
+						(size (contained_entities (current_value)))
+					)
+
+					;skip the manifest
+					(!= "_population_manifest" (current_value))
+				)
+			)
+			(contained_entities)
 		)
 
 	;returns a list of the individuals that are diploids
 	get_diploids
-		(contained_entities
-			(list (query_exists "diploid") )
+		(filter
+			(lambda
+				(= 2
+					(size (contained_entities (current_value)))
+				)
+			)
+			(contained_entities)
 		)
 
 	;returns an assoc of entity ids and scores.  if entities is specified, then it will only return the scores for those entities
