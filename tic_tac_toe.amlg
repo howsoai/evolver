@@ -22,7 +22,7 @@
 			;in range, and unset then set the new value
 			(and	(<= 0 row 2)
 					(<= 0 column 2)
-					(= (get (get board row) column) 0)
+					(= (get board [row column]) 0)
 			)
 			(set board
 				row
@@ -42,6 +42,25 @@
 			(lambda (= player (current_value)))
 			(append (get board 0) (get board 1) (get board 2))
 		))
+
+	;returns true if the player has the center position
+	;parameters:
+	;board
+	;player
+	has_center
+		(= player (get board [1 1]))
+
+	;returns the number of corners that the player has
+	;parameters:
+	;board
+	;player
+	num_corners
+		(+
+			(if (= player (get board [0 0])) 1 0)
+			(if (= player (get board [2 0])) 1 0)
+			(if (= player (get board [0 2])) 1 0)
+			(if (= player (get board [2 2])) 1 0)
+		)
 	
 	;checks the given board to see if there is a winner, if so, returns the player
 	; otherwise returns .false, or -1 if tie
@@ -192,13 +211,33 @@
 		{
 			board board
 			winning_player winning_player
-			player_1_score (if  (= winning_player 1)  50
-								(= winning_player -1) 40
+			player_1_score (+
+								;win
+								(if (= winning_player 1)  150 0)
+								;tie
+								(if (= winning_player -1) 120 0) 
+								;loss
+								(if (= winning_player 2)   30 0) 
+								;1 point for each move
 								(call count_positions (assoc player 1 board board))
+								;center
+								(if (call has_center (assoc player 1 board board)) 5 0)
+								;corners
+								(* 2 (call num_corners (assoc player 1 board board)))
 							)
-			player_2_score (if  (= winning_player 2)  50
-								(= winning_player -1) 40
+			player_2_score (+
+								;win
+								(if (= winning_player 2)  150 0)
+								;tie
+								(if (= winning_player -1) 120 0) 
+								;loss
+								(if (= winning_player 1)   30 0) 
+								;1 point for each move
 								(call count_positions (assoc player 2 board board))
+								;center
+								(if (call has_center (assoc player 2 board board)) 5 0)
+								;corners
+								(* 2 (call num_corners (assoc player 2 board board)))
 							)
 		}
 	)

@@ -126,8 +126,8 @@
 						(print "Player 1 complexity: " player_1_complexity "\nPlayer 2 complexity: " player_2_complexity "\n")
 
 						(assign (assoc
-							player_1_score (/ player_1_score (log (max 50 player_1_complexity)))
-							player_2_score (/ player_2_score (log (max 50 player_2_complexity)))
+							player_1_score (/ player_1_score (log (+ 20 player_1_complexity)))
+							player_2_score (/ player_2_score (log (+ 20 player_2_complexity)))
 						))
 						(print "Player 1 complexity normalized score: " player_1_score "\nPlayer 2 complexity normalized score: " player_2_score "\n")
 
@@ -138,7 +138,7 @@
 				(call_entity "evolver" "get_all_individuals")
 			)
 			(system "validate")
-			(call_entity "evolver" "population_cycle" (assoc mutation_rate 0.03))
+			(call_entity "evolver" "population_cycle" (assoc mutation_rate 0.03 carrying_capacity 200))
 			(system "validate")
 			(accum "generation" 1)
 		)
