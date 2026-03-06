@@ -1,29 +1,28 @@
-(null
-
+{
 	;reacts to the input that is passed in
-	#react #haploid
-		(let (assoc
-			flattened (zip (range 0 8)
-					(append (get board 0) (get board 1) (get board 2))
-				)
+	react
+	(let (assoc
+		flattened (zip (range 0 8)
+				(append (get board 0) (get board 1) (get board 2))
 			)
-			
-			(let (assoc
-				position
-					(rand
-						(indices
-							(filter
-								(lambda (= 0 (current_value)))
-								flattened
-							)
+		)
+		
+		(let (assoc
+			position
+				(rand
+					(indices
+						(filter
+							(lambda (= 0 (current_value)))
+							flattened
 						)
 					)
 				)
-				
-				(list
-					(floor (/ position 3))
-					(floor (mod position 3))
-				)
+			)
+			
+			(list
+				(floor (/ position 3))
+				(floor (mod position 3))
 			)
 		)
-)
+	)
+}

@@ -1,9 +1,8 @@
-(null
-
+{
 	;reacts to the input that is passed in
-	#react #haploid
+	react
 			(list
 				(floor (* 5 (rand)))
 				(floor (* 5 (rand)))
 			)
-)
+}
