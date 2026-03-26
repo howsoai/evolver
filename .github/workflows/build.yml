@@ -151,7 +151,7 @@ jobs:
     - name: Upload 'evolve' directory
       if: always()
       continue-on-error: true
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: evolver${{ matrix.amlg-postfix }}-artifacts
         path: evolver${{ matrix.amlg-postfix }}.tar.gz
@@ -159,7 +159,7 @@ jobs:
     - name: Upload transaction logs
       if: always()
       continue-on-error: true
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: evolver${{ matrix.amlg-postfix }}-transaction-logs
         path: trace.amlg
