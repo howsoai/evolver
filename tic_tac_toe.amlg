@@ -243,7 +243,7 @@
 	)
 
 	;main
-	(null)
+	.null
 	(seq
 		;if the program is run directly, this will play the game
 		; otherwise, if loaded as a library, this part will not be run

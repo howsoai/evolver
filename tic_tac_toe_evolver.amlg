@@ -59,13 +59,13 @@
 		))
 	
 	^player_1_entity
-		(null)
+		.null
 		
 	^player_2_entity
-		(null)
+		.null
 
 	;main method
-	(null)
+	.null
 
 	(declare
 		(assoc
@@ -78,7 +78,7 @@
 		))
 
 		(load_entity "./tic_tac_toe.amlg" "TicTacToeGame")
-		(load_entity "./evolver.amlg" "evolver" (null)
+		(load_entity "./evolver.amlg" "evolver" .null
 			.true {escape_resource_name .true escape_contained_resource_names .true})
 		(set_entity_rand_seed "evolver" (rand))
 
