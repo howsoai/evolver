@@ -52,7 +52,7 @@
 					(append
 						(map
 							(lambda (assoc
-										score (null)
+										score .null
 										age (+ 0)
 							))
 							(zip new_entities)
@@ -78,7 +78,7 @@
 									(map
 										(lambda
 											(if
-												(= (null) (get (current_value) "score"))
+												(= .null (get (current_value) "score"))
 												0
 
 												;valid value
@@ -136,7 +136,7 @@
 	;updates the score of an individual specified by the parameters id and score respectively
 	update_score
 		(declare (assoc
-				id (null)
+				id .null
 				metadata (call_entity "_population_manifest" "metadata")
 				prev_score_discount 0.75
 				score 0
@@ -155,7 +155,7 @@
 								(set metadata (list id "score")
 
 									;if don't have an existing score, use the current one
-									(if (= prev_score (null))
+									(if (= prev_score .null)
 										score
 
 										;otherwise update it
@@ -289,7 +289,7 @@
 			"diploid"
 			(contains_label id "haploid")
 			"haploid"
-			(null)
+			.null
 		)
 
 	;returns a size for the entity passed in id, a proxy for complexity
@@ -323,8 +323,8 @@
 	;returns the id of the entity created
 	create_haploid
 		(declare (assoc
-			id (null)
-			code (null)
+			id .null
+			code .null
 			)
 
 			(create_entities
@@ -337,9 +337,9 @@
 	;returns the id of the entity created
 	create_diploid
 		(declare (assoc
-			id (null)
-			code1 (null)
-			code2 (null)
+			id .null
+			code1 .null
+			code2 .null
 			)
 
 			(let (assoc
@@ -361,15 +361,15 @@
 	; if the parameter mutation_type_weights is specified, it will use that for the mutation type weights (see mutate/mutate_entity documentation)
 	mate
 		(declare (assoc
-				id (null)
-				offspring_sex (null)
+				id .null
+				offspring_sex .null
 				mutation_rate 0.01
-				mutation_operator_weights (null)
-				mutation_type_weights (null)
+				mutation_operator_weights .null
+				mutation_type_weights .null
 				)
 			(if (or
 					(= offspring_sex "diploid")
-					(and (= offspring_sex (null)) (< (rand) 0.5) )
+					(and (= offspring_sex .null) (< (rand) 0.5) )
 				)
 
 				;diploid
@@ -429,9 +429,9 @@
 	;if the sexes do not match, then nothing is performed
 	merge
 		(declare (assoc
-				id1 (null)
-				id2 (null)
-				merged_id (null)
+				id1 .null
+				id2 .null
+				merged_id .null
 			)
 
 			(if
@@ -450,7 +450,7 @@
 				)
 
 				;if different, then can't merge
-				(null)
+				.null
 			)
 		)
 
@@ -462,7 +462,7 @@
 		;merge entities
 		;set new entity code with two ploids, one from each, along with react header
 		(declare (assoc
-				id (null)
+				id .null
 				)
 
 			(assign (assoc id (first (create_entities id diploid_react_base_template)) ))
@@ -478,8 +478,8 @@
 	; evaluates to a list of the ids of the two new offspring
 	split_diploid_to_2_haploids
 		(declare (assoc
-				id1 (null)
-				id2 (null)
+				id1 .null
+				id2 .null
 				)
 			(list
 				(clone_entities (list diploid "ploid1") id1)
@@ -540,10 +540,10 @@
 		fraction_haploids_reproducing 0.4
 		fraction_diploids_reproducing 0.8
 		max_num_haploid_matings 5
-		metadata (null)
+		metadata .null
 		mutation_rate 0.01
-		mutation_operator_weights (null)
-		mutation_type_weights (null)
+		mutation_operator_weights .null
+		mutation_type_weights .null
 		)
 
 		(call remove_unused_records)

@@ -64,7 +64,7 @@ In ZW, Z has more data and the more experimental data, so ZZ has lower base phen
 Parameterized examples:
 
 
-have get_ploid_entities on haploid and diploid types -- return (assoc "ploid1" (list) "ploid2" (null)) -- null not needed, can be assumed -- for haploid and (assoc "ploid1" (list "ploid1") "ploid2" (list "ploid2")) for diploids.  if haploid does not have a label to return ploid entities, will return null, and so can be inferred that everything is only ploid1
+have get_ploid_entities on haploid and diploid types -- return (assoc "ploid1" (list) "ploid2" .null) -- null not needed, can be assumed -- for haploid and (assoc "ploid1" (list "ploid1") "ploid2" (list "ploid2")) for diploids.  if haploid does not have a label to return ploid entities, will return null, and so can be inferred that everything is only ploid1
 
 
 put in diploid:

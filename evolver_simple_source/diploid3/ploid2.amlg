@@ -1,5 +1,5 @@
 {
 	;reacts to the input that is passed in
 	react
-	(null)
+	.null
 }
