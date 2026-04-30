@@ -40,6 +40,8 @@
 			3
 			;max entity name length
 			25
+			;allow entity writes
+			.false
 			;suppress warning return
 			.false
 		)
