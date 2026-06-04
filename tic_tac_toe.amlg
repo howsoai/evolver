@@ -24,9 +24,9 @@
 					(<= 0 column 2)
 					(= (get board [row column]) 0)
 			)
-			(set board
+			(modify board
 				row
-				(set (get board row) column player)
+				(modify (get board row) column player)
 			)
 			
 			;else return the board as it is

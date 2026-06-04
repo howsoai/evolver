@@ -126,7 +126,7 @@
 		(assign_to_entities "_population_manifest" (assoc metadata
 			(map
 				(lambda
-					(set (current_value) "age"
+					(modify (current_value) "age"
 						(+ 1 (get (current_value) "age"))))
 				(retrieve_from_entity "_population_manifest" "metadata")
 			)
@@ -152,7 +152,7 @@
 					;update score
 					(assign (assoc
 							metadata
-								(set metadata (list id "score")
+								(modify metadata (list id "score")
 
 									;if don't have an existing score, use the current one
 									(if (= prev_score .null)
@@ -170,7 +170,7 @@
 
 				;initialize record for this entity
 				(assign (assoc
-					metadata (set metadata
+					metadata (modify metadata
 						id
 							(assoc
 								score score
