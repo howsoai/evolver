@@ -483,7 +483,7 @@
 				)
 			(list
 				(clone_entities (list diploid "ploid1") id1)
-				(clone_entities (list diploid "ploid1") id2)
+				(clone_entities (list diploid "ploid2") id2)
 			)
 		)
 
