@@ -28,8 +28,11 @@
 			board board
 			player player
 			)
-			;sandbox execution using defaults
-			.true
+			;sandbox execution using defaults but constrain compute and memory a little more
+			{
+				max_node_operations 3000
+				max_node_allocations 2500
+			}
 		)
 			
 	get_player_1_move
