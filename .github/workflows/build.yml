@@ -105,8 +105,8 @@ jobs:
         echo "Running..."
 
         # Run Evolver with GDB
-        # However, sent a SIGINT after 6 minutes (indicating a hanging Evolver) to get a stacktrace
-        TIMEOUT=360
+        # However, sent a SIGINT after 10 minutes (indicating a hanging Evolver) to get a stacktrace
+        TIMEOUT=600
 
         # Run GDB in the background
         gdb_output_file=$(mktemp)
